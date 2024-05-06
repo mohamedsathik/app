@@ -21,7 +21,7 @@ jobs:
                 DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
               with:
                 host: ${{ secrets.EC2HOSTNAME }}
-                username: ${{ secrets.   }}
+                username: ${{ secrets.EC2USERNAME }}
                 key: ${{ secrets.EC2KEY }}
                 script: |
                     if ! command -v docker &> /dev/null
