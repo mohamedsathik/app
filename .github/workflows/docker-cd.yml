@@ -1,0 +1,52 @@
+name: Docker Image CD
+
+on: 
+    workflow_run: 
+        workflows: ["Docker Image CI"]
+        types:
+            - completed
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        environment: DOCKER_USERNAME
+        steps:
+            - name: checkout
+              uses: actions/checkout@v4
+
+            - name: Login
+              uses: appleboy/ssh-action@v1.0.3
+              env:
+                DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+                DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+              with:
+                host: ${{ secrets.EC2HOSTNAME }}
+                username: ${{ secrets.   }}
+                key: ${{ secrets.EC2KEY }}
+                script: |
+                    if ! command -v docker &> /dev/null
+                    then
+                        echo "Docker is not installed. Installing Docker..."
+                        curl -fsSL https://get.docker.com | sh
+                    else
+                        echo "Docker is already installed."
+                    fi
+
+                    if groups | grep -q docker; then
+                      echo "User is already exist"
+                    else
+                      echo "User is not a part of group"
+                      newgrp docker
+                      sudo usermod -a -G docker $(whoami)
+                    fi
+                    
+                      echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --passwd-stdin 
+                    
+                    docker pull alexkhan2628/docker:latest
+
+                    docker rm -f docker-container
+                    
+                    docker run -d --name docker-container -p 8000:8000 alexkhan2628/docker:latest
+                    
+
+                  
